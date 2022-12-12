@@ -110,20 +110,14 @@ self.addEventListener("push", evt => {
   // });
   // self.registration.showNotification('test message', {});
 
-  var keys = {
-    body: 'Here is a notification from CoolR Dashboard',
-    icon: 'images/example.png',
+  var options = {
+    body: `Here is a notification from CoolR Dashboard ${new Date().toISOString()}`,
+    icon: './coolr.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
       primaryKey: 1
-    },
-    actions: [
-      {action: 'explore', title: 'Explore this new world',
-        icon: 'images/checkmark.png'},
-      {action: 'close', title: 'Close notification',
-        icon: 'images/xmark.png'},
-    ]
+    }
   };
-  self.registration.showNotification('CoolR Dashboard', keys);
+  self.registration.showNotification('CoolR Dashboard', options);
 });

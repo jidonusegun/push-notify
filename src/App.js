@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css';
 
-const publicKey = 'BNgZPgqinBqkHBKtXdGU1xASx5GzjPoLLMP9QiXCV9RCBx-7jjHdb8ME1LFgNxhaVVoxTjrKGP6P9DuaYjUnXyg'
+const publicKey = 'BNgZPgqinBqkHBKtXdGU1xASx5GzjPoLLMP9QiXCV9RCBx-7jjHdb8ME1LFgNxhaVVoxTjrKGP6P9DuaYjUnXyg';
 
 function urlBase64ToUint8Array(base64String) {
   var padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -19,48 +19,41 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 function App() {
-  // async function regWorker() {
-  //   if (Notification.permission === 'granted') {
-  //     navigator.serviceWorker.getRegistration().then(function(reg) {
-  //       var options = {
-  //         body: `Here is a notification from CoolR Dashboard ${new Date().toISOString()}`,
-  //         icon: './coolr.png',
-  //         vibrate: [100, 50, 100],
-  //         data: {
-  //           dateOfArrival: Date.now(),
-  //           primaryKey: 1
-  //         }
-  //       };
-  //       reg.showNotification('CoolR Group', options);
-  //     });
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   Notification.requestPermission()
-  // },[])
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     regWorker();
-  //   }, 60000);
-  //   return () => clearInterval(interval);
-  // }, []);
+  const [state, setState] = useState();
 
   const regWorker = async() => {
-   const sw = await navigator.serviceWorker.ready
-   const push = await sw.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey)
-    });
-    console.log(push)
+    navigator.serviceWorker.ready
+    .then(reg => {
+        reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(publicKey)
+          }).then(sub => {
+            setState(JSON.stringify(sub))
+            fetch("https://agile-dusk-21333.herokuapp.com/subscribe", { method: "POST", body: JSON.stringify(sub), headers: { 'Content-Type': 'application/json' } })
+            .then(res => res.text())
+            .then(txt => console.log(txt))
+            .catch(err => console.error(err));
+          }, err => console.error(err));
+    })
   }
+
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      const permission = await window.Notification.requestPermission()
+      if (permission === 'granted') {
+        regWorker();
+      }
+      
+    }
+    requestNotificationPermission();
+    // window.safari​.pushNotification
+  }, []);
   
   return (
       <main className="App">
         <h1>Push Notification</h1>
+        <button onClick={() => regWorker()}>Click</button>
         <p>This page will trigger push notification every 1 minute</p>
-        <button onClick={regWorker}>Push Button</button>
         <img src='./coolr.png' alt='CoolR Group' width="300px" height="300px" />
       </main>
   );
