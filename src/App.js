@@ -35,7 +35,7 @@ function App() {
             .catch(err => console.error(err));
           }, err => console.error(err));
     })
-  }
+  } 
 
   useEffect(() => {
     const requestNotificationPermission = async () => {
