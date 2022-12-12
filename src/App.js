@@ -29,7 +29,7 @@ function App() {
             applicationServerKey: urlBase64ToUint8Array(publicKey)
           }).then(sub => {
             setState(JSON.stringify(sub))
-            fetch("https://agile-dusk-21333.herokuapp.com/subscribe", { method: "POST", body: JSON.stringify(sub), headers: { 'Content-Type': 'application/json' } })
+            fetch("https://push-notification-server-rho.vercel.app/subscribe", { method: "POST", body: JSON.stringify(sub), headers: { 'Content-Type': 'application/json' } })
             .then(res => res.text())
             .then(txt => console.log(txt))
             .catch(err => console.error(err));
@@ -51,7 +51,7 @@ function App() {
   
   return (
       <main className="App">
-        <h1>Push Notification</h1>
+        <h1>Push Notification Pop</h1>
         <button onClick={() => regWorker()}>Click</button>
         <p>This page will trigger push notification every 1 minute</p>
         <img src='./coolr.png' alt='CoolR Group' width="300px" height="300px" />
